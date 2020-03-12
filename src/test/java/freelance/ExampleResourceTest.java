@@ -2,6 +2,7 @@ package freelance;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -10,12 +11,21 @@ import static org.hamcrest.CoreMatchers.is;
 public class ExampleResourceTest {
 
     @Test
-    public void testHelloEndpoint() {
+    public void testFindAll() {
         given()
-          .when().get("/hello")
+          .when().get("/freelancers")
           .then()
-             .statusCode(200)
-             .body(is("hello"));
+             .statusCode(200);
+           
+    }
+    
+    @Test
+    public void testFindById() {
+        given()
+          .when().get("/freelancers/123456")
+          .then()
+             .statusCode(200);
+           
     }
 
 }
