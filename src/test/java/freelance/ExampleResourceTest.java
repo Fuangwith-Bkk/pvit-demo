@@ -28,4 +28,13 @@ public class ExampleResourceTest {
            
     }
 
+    @Test
+    public void testDeleteById() {
+        given()
+          .when().delete("/freelancers/123456")
+          .then()
+             .statusCode(201);
+           
+    }
+
 }

@@ -4,6 +4,8 @@ import java.util.Optional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import javax.ws.rs.Produces;
@@ -37,16 +39,40 @@ public class FreelancerResource {
     }
     @GET
     @Path("/{freelancerId}")
-    public Optional<Freelancer> findById(@PathParam("freelancerId") long freelancerId){
+    public Optional<Freelancer> findById(
+        @PathParam("freelancerId") long freelancerId
+        ){
         logger.info("findById: "+freelancerId);
+        
         return freelancerRepository.findById(freelancerId);
     }
 
     @DELETE
     @Path("/{freelancerId}")
-    public void deleteById(@PathParam("freelancerId") long freelancerId){
+    public void deleteById(
+        @PathParam("freelancerId") long freelancerId
+        ){
         logger.info("deleteById: "+freelancerId);
         freelancerRepository.deleteById(freelancerId);
+    }
+
+    @PUT
+    @Path("/{freelancerId}")
+    public Freelancer updateById(
+        @PathParam("freelancerId") long freelancerId,
+        Freelancer freelancer
+        ){
+        logger.info("updateById: "+freelancerId);
+        return freelancerRepository.save(freelancer);
+    }
+
+    @POST
+    @Path("/")
+    public Freelancer createFreelancer(
+        Freelancer freelancer
+        ){
+        logger.info("createFreelancer");
+        return freelancerRepository.save(freelancer);
     }
     
     
