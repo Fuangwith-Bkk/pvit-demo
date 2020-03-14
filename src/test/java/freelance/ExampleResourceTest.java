@@ -2,10 +2,10 @@ package freelance;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestFactory;
+
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
+
 
 @QuarkusTest
 public class ExampleResourceTest {
@@ -33,7 +33,7 @@ public class ExampleResourceTest {
         given()
           .when().delete("/freelancers/123456")
           .then()
-             .statusCode(201);
+             .statusCode(200);
            
     }
 

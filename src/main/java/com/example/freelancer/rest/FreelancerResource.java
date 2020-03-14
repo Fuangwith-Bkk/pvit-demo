@@ -38,7 +38,7 @@ public class FreelancerResource {
     @ConfigProperty(name = "app.version", defaultValue = "1.0.0")
     String version;
 
-    
+
     public FreelancerResource(FreelancerRepository freelancerRepository) {
         this.freelancerRepository = freelancerRepository;
     }
@@ -57,31 +57,31 @@ public class FreelancerResource {
     @Path("/{freelancerId}")
     public Response findById(
         @PathParam("freelancerId") long freelancerId
-        ){
-        logger.info("findById: "+freelancerId);
-        Optional<Freelancer>  freelancers = freelancerRepository.findById(freelancerId);
-        if(freelancers.isPresent()){
-            logger.info(freelancers.get().getId()+" is found");
+    ) {
+        logger.info("findById: " + freelancerId);
+        Optional < Freelancer > freelancers = freelancerRepository.findById(freelancerId);
+        if (freelancers.isPresent()) {
+            logger.info(freelancers.get().getId() + " is found");
             return Response
-            .status(Status.OK)
-            .encoding(MediaType.APPLICATION_JSON)
-            .entity(freelancers.get())
-            .build();
-        }else{
-            logger.info(freelancerId+" is not found");
+                .status(Status.OK)
+                .encoding(MediaType.APPLICATION_JSON)
+                .entity(freelancers.get())
+                .build();
+        } else {
+            logger.info(freelancerId + " is not found");
             return Response
-            .status(Status.NOT_FOUND)
-            .encoding(MediaType.APPLICATION_JSON)
-            .build();
-        }  
+                .status(Status.NOT_FOUND)
+                .encoding(MediaType.APPLICATION_JSON)
+                .build();
+        }
     }
 
     @DELETE
     @Path("/{freelancerId}")
     public Response deleteById(
         @PathParam("freelancerId") long freelancerId
-        ){
-        logger.info("deleteById: "+freelancerId);
+    ) {
+        logger.info("deleteById: " + freelancerId);
         freelancerRepository.deleteById(freelancerId);
         return Response
             .status(Status.OK)
@@ -94,37 +94,37 @@ public class FreelancerResource {
     public Response updateById(
         @PathParam("freelancerId") long freelancerId,
         Freelancer freelancer
-        ){
-        logger.info("updateById: "+freelancerId);
+    ) {
+        logger.info("updateById: " + freelancerId);
         boolean isPresent = freelancerRepository.findById(freelancerId).isPresent();
-        logger.info("isPresent: "+isPresent);
+        logger.info("isPresent: " + isPresent);
         Freelancer responseFreelancer = freelancerRepository.save(freelancer);
-        logger.info(responseFreelancer.getId()+" is created/updated");
-        if(isPresent)
+        logger.info(responseFreelancer.getId() + " is created/updated");
+        if (isPresent)
             return Response
-                    .status(Status.NO_CONTENT)
-                    .encoding(MediaType.APPLICATION_JSON)
-                    .build();
+                .status(Status.NO_CONTENT)
+                .encoding(MediaType.APPLICATION_JSON)
+                .build();
         else
             return Response
-                    .status(Status.CREATED)
-                    .encoding(MediaType.APPLICATION_JSON)
-                    .entity(responseFreelancer)
-                    .build();
+                .status(Status.CREATED)
+                .encoding(MediaType.APPLICATION_JSON)
+                .entity(responseFreelancer)
+                .build();
     }
 
     @POST
     @Path("/")
     public Response createFreelancer(
         Freelancer freelancer
-        ){
-        logger.info("createFreelancer: "+freelancer.getId());
+    ) {
+        logger.info("createFreelancer: " + freelancer.getId());
         return Response.status(Status.CREATED)
-                .encoding(MediaType.APPLICATION_JSON)
-                .entity(freelancerRepository.save(freelancer))
-                .header("Location","/freelancers/"+freelancer.getId())
-                .build();
+            .encoding(MediaType.APPLICATION_JSON)
+            .entity(freelancerRepository.save(freelancer))
+            .header("Location", "/freelancers/" + freelancer.getId())
+            .build();
     }
-    
-    
+
+
 }
