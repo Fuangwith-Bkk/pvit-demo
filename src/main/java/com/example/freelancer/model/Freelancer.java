@@ -26,7 +26,7 @@ public class Freelancer implements Serializable {
     
     @Id
     @Column(name = "id")
-    @JsonProperty("freelancerId")
+    @JsonProperty("id")
     private Long id;
     
     @Column(name="firstname")
