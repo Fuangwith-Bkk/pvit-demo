@@ -1,6 +1,9 @@
 package com.example.freelancer.rest;
 
 import java.util.Optional;
+
+import javax.enterprise.context.ApplicationScoped;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -8,8 +11,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
+
+
+
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import com.example.freelancer.jpa.FreelancerRepository;
 import com.example.freelancer.model.Freelancer;
 
@@ -19,6 +28,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Path("/freelancers")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class FreelancerResource {
 
     private final FreelancerRepository freelancerRepository;
@@ -27,52 +37,93 @@ public class FreelancerResource {
 
     @ConfigProperty(name = "app.version", defaultValue = "1.0.0")
     String version;
+
     
     public FreelancerResource(FreelancerRepository freelancerRepository) {
         this.freelancerRepository = freelancerRepository;
     }
 
     @GET
-    public Iterable<Freelancer> findAll() {
+    //Iterable<Freelancer> 
+    public Response findAll() {
         logger.info("finaAll");
-        return freelancerRepository.findAll();
+        return Response
+            .status(Status.OK)
+            .encoding(MediaType.APPLICATION_JSON)
+            .entity(freelancerRepository.findAll())
+            .build();
     }
     @GET
     @Path("/{freelancerId}")
-    public Optional<Freelancer> findById(
+    public Response findById(
         @PathParam("freelancerId") long freelancerId
         ){
         logger.info("findById: "+freelancerId);
-        
-        return freelancerRepository.findById(freelancerId);
+        Optional<Freelancer>  freelancers = freelancerRepository.findById(freelancerId);
+        if(freelancers.isPresent()){
+            logger.info(freelancers.get().getId()+" is found");
+            return Response
+            .status(Status.OK)
+            .encoding(MediaType.APPLICATION_JSON)
+            .entity(freelancers.get())
+            .build();
+        }else{
+            logger.info(freelancerId+" is not found");
+            return Response
+            .status(Status.NOT_FOUND)
+            .encoding(MediaType.APPLICATION_JSON)
+            .build();
+        }  
     }
 
     @DELETE
     @Path("/{freelancerId}")
-    public void deleteById(
+    public Response deleteById(
         @PathParam("freelancerId") long freelancerId
         ){
         logger.info("deleteById: "+freelancerId);
         freelancerRepository.deleteById(freelancerId);
+        return Response
+            .status(Status.OK)
+            .encoding(MediaType.APPLICATION_JSON)
+            .build();
     }
 
     @PUT
     @Path("/{freelancerId}")
-    public Freelancer updateById(
+    public Response updateById(
         @PathParam("freelancerId") long freelancerId,
         Freelancer freelancer
         ){
         logger.info("updateById: "+freelancerId);
-        return freelancerRepository.save(freelancer);
+        boolean isPresent = freelancerRepository.findById(freelancerId).isPresent();
+        logger.info("isPresent: "+isPresent);
+        Freelancer responseFreelancer = freelancerRepository.save(freelancer);
+        logger.info(responseFreelancer.getId()+" is created/updated");
+        if(isPresent)
+            return Response
+                    .status(Status.NO_CONTENT)
+                    .encoding(MediaType.APPLICATION_JSON)
+                    .build();
+        else
+            return Response
+                    .status(Status.CREATED)
+                    .encoding(MediaType.APPLICATION_JSON)
+                    .entity(responseFreelancer)
+                    .build();
     }
 
     @POST
     @Path("/")
-    public Freelancer createFreelancer(
+    public Response createFreelancer(
         Freelancer freelancer
         ){
-        logger.info("createFreelancer");
-        return freelancerRepository.save(freelancer);
+        logger.info("createFreelancer: "+freelancer.getId());
+        return Response.status(Status.CREATED)
+                .encoding(MediaType.APPLICATION_JSON)
+                .entity(freelancerRepository.save(freelancer))
+                .header("Location","/freelancers/"+freelancer.getId())
+                .build();
     }
     
     
