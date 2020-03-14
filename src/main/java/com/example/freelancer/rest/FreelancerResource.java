@@ -84,7 +84,7 @@ public class FreelancerResource {
         logger.info("deleteById: " + freelancerId);
         freelancerRepository.deleteById(freelancerId);
         return Response
-            .status(Status.OK)
+            .status(Status.NO_CONTENT)
             .encoding(MediaType.APPLICATION_JSON)
             .build();
     }
@@ -110,6 +110,7 @@ public class FreelancerResource {
                 .status(Status.CREATED)
                 .encoding(MediaType.APPLICATION_JSON)
                 .entity(responseFreelancer)
+                .header("Location", "/freelancers/" + responseFreelancer.getId())
                 .build();
     }
 

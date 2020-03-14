@@ -33,7 +33,7 @@ public class ExampleResourceTest {
         given()
           .when().delete("/freelancers/123456")
           .then()
-             .statusCode(200);
+             .statusCode(204);
            
     }
 
