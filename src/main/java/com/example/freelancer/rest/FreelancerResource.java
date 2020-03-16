@@ -97,22 +97,27 @@ public class FreelancerResource {
     ) {
         logger.info("updateById: " + freelancerId);
         boolean isPresent = freelancerRepository.findById(freelancerId).isPresent();
+        
         logger.info("isPresent: " + isPresent);
-        Freelancer responseFreelancer = freelancerRepository.save(freelancer);
-        logger.info(responseFreelancer.getId() + " is created/updated");
-        if (isPresent)
+       
+        if (isPresent){
+            freelancerRepository.save(freelancer);
+            logger.info(freelancer.getId() + " is updated");
             return Response
                 .status(Status.NO_CONTENT)
                 .encoding(MediaType.APPLICATION_JSON)
                 .build();
-        else
+         }else{
+            Freelancer responseFreelancer = freelancerRepository.save(freelancer);
+            logger.info(responseFreelancer.getId() + " is created");
             return Response
                 .status(Status.CREATED)
                 .encoding(MediaType.APPLICATION_JSON)
                 .entity(responseFreelancer)
                 .header("Location", "/freelancers/" + responseFreelancer.getId())
                 .build();
-    }
+        }
+            }
 
     @POST
     @Path("/")

@@ -3,13 +3,13 @@ package com.example.freelancer.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+//import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
-// @ConfigurationProperties(prefix="app")
+
 @Component
 @JsonPropertyOrder({ "version", "success", "freelancers", "message" })
 public class FreelancerResponse {

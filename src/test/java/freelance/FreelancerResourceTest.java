@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 
 
 import static io.restassured.RestAssured.given;
-
+import static org.hamcrest.Matchers.equalTo;
 
 import javax.ws.rs.core.MediaType;
-import io.restassured.response.Response;
+
 
 import com.example.freelancer.model.Freelancer;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @QuarkusTest
 public class FreelancerResourceTest {
-  private static final Logger logger = Logger.getLogger(ExampleResourceTest.class);
+  private static final Logger logger = Logger.getLogger(FreelancerResourceTest.class);
   @Test
   public void testFindAll() {
     logger.info("Test GET all Ids");
@@ -75,8 +75,6 @@ public class FreelancerResourceTest {
       .get("/freelancers/999999")
       .then()
       .statusCode(200);
-
-
   }
   @Test
   public void updateFreelancer() throws JsonProcessingException {
@@ -94,14 +92,19 @@ public class FreelancerResourceTest {
       .post("/freelancers")
       .then()
       .statusCode(201);
+
     given()
       .get("/freelancers/888888")
       .then()
-      .statusCode(200);
-
-
+      .assertThat()
+      .statusCode(200)
+      .body("email", equalTo(freelancer.getEmail()))
+      .body("lastName", equalTo(freelancer.getLastName()))
+      .body("firstName",equalTo(freelancer.getFirstName()));
+      
+      // .body("firstName",equalTo(freelancer.getFirstName())
+      // .body("lastName",equalTo(freelancer.getLastName());
   }
-
   @Test
   public void updateExistingFreelancer() throws JsonProcessingException{
     Freelancer freelancer = new Freelancer();
@@ -110,6 +113,7 @@ public class FreelancerResourceTest {
     freelancer.setEmail(newEmail);
     ObjectMapper objectMapper = new ObjectMapper();
     String freelancerAsString = objectMapper.writeValueAsString(freelancer);
+    
     logger.info("Test PUT for existing freelancer with: "+freelancerAsString);
     given()
       .contentType(MediaType.APPLICATION_JSON)
@@ -117,16 +121,14 @@ public class FreelancerResourceTest {
       .put("/freelancers/123456")
       .then()
       .statusCode(204);
-    Response response = given()
+
+     given()
       .get("/freelancers/123456")
       .then()
+      .assertThat()
       .statusCode(200)
-      .extract()
-      .response();
-    given()
-      .equals(
-            newEmail.equals(response.as(Freelancer.class).getEmail())
-            );
+      .body("email", equalTo("jteller@rider.com")); 
+     
     
   }
 
