@@ -101,9 +101,6 @@ public class FreelancerResourceTest {
       .body("email", equalTo(freelancer.getEmail()))
       .body("lastName", equalTo(freelancer.getLastName()))
       .body("firstName",equalTo(freelancer.getFirstName()));
-      
-      // .body("firstName",equalTo(freelancer.getFirstName())
-      // .body("lastName",equalTo(freelancer.getLastName());
   }
   @Test
   public void updateExistingFreelancer() throws JsonProcessingException{
