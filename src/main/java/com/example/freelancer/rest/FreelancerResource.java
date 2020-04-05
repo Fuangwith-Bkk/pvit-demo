@@ -32,7 +32,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 // import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 // import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+//import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Path("/freelancers")
 @Produces(MediaType.APPLICATION_JSON)
@@ -54,7 +54,7 @@ public class FreelancerResource {
 
     @GET
     @Operation(summary = "Returns all freelancers")
-    @APIResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = Freelancer.class, required = true)))
+    @APIResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Freelancer.class, required = true)))
     //Iterable<Freelancer> 
     public Response findAll() {
         logger.info("finaAll");
@@ -67,7 +67,7 @@ public class FreelancerResource {
     @GET
     @Path("/{freelancerId}")
     @Operation(summary = "Get freelaner by Id")
-    @APIResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = Freelancer.class, required = true)))
+    @APIResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Freelancer.class, required = true)))
     public Response findById(
         @PathParam("freelancerId") long freelancerId
     ) {
@@ -92,7 +92,7 @@ public class FreelancerResource {
     @DELETE
     @Path("/{freelancerId}")
     @Operation(summary = "Returns all freelancers")
-    @APIResponse(responseCode = "204", content = @Content(mediaType = APPLICATION_JSON))
+    @APIResponse(responseCode = "204", content = @Content(mediaType = MediaType.APPLICATION_JSON))
     public Response deleteById(
         @PathParam("freelancerId") long freelancerId
     ) {
@@ -107,7 +107,7 @@ public class FreelancerResource {
     @PUT
     @Path("/{freelancerId}")
     @Operation(summary = "Update freelancer")
-    @APIResponse(responseCode = "204", content = @Content(mediaType = APPLICATION_JSON))
+    @APIResponse(responseCode = "204", content = @Content(mediaType = MediaType.APPLICATION_JSON))
     public Response updateById(
         @PathParam("freelancerId") long freelancerId,
         Freelancer freelancer
@@ -139,7 +139,7 @@ public class FreelancerResource {
     @POST
     @Path("/")
     @Operation(summary = "Create freelancer")
-    @APIResponse(responseCode = "201", content = @Content(mediaType = APPLICATION_JSON))
+    @APIResponse(responseCode = "201", content = @Content(mediaType = MediaType.APPLICATION_JSON))
     public Response createFreelancer(
         Freelancer freelancer
     ) {
