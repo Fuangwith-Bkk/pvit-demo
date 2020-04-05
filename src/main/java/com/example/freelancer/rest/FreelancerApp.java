@@ -20,7 +20,7 @@ import javax.ws.rs.ApplicationPath;
     servers = {
         @Server(url = "http://localhost:8080")
     },
-    externalDocs = @ExternalDocumentation(url = "https://github.com/quarkusio/quarkus-workshops", description = "Sample Quarkus"),
+    externalDocs = @ExternalDocumentation(url = "https://gitlab.com/ocp-demo/freelancer-quarkus", description = "Freelancer API"),
     tags = {
         @Tag(name = "api", description = "Demo RESTful API with JPA"),
         @Tag(name = "freelancers", description = "Find some freelance?")
