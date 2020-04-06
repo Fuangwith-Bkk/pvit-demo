@@ -2,6 +2,7 @@ package freelance;
 
 import io.quarkus.test.junit.QuarkusTest;
 
+
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,9 @@ import javax.ws.rs.core.MediaType;
 import com.example.freelancer.model.Freelancer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import static javax.ws.rs.core.HttpHeaders.ACCEPT;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.Response.Status;
 
 @QuarkusTest
 public class FreelancerResourceTest {
@@ -26,7 +29,7 @@ public class FreelancerResourceTest {
     given()
       .when().get("/freelancers")
       .then()
-      .statusCode(200);
+      .statusCode(Status.OK.getStatusCode());
 
   }
 
@@ -36,7 +39,7 @@ public class FreelancerResourceTest {
     given()
       .when().get("/freelancers/123456")
       .then()
-      .statusCode(200);
+      .statusCode(Status.OK.getStatusCode());
 
   }
 
@@ -46,12 +49,12 @@ public class FreelancerResourceTest {
     given()
       .when().delete("/freelancers/123456")
       .then()
-      .statusCode(204);
+      .statusCode(Status.NO_CONTENT.getStatusCode());
     logger.info("Check that 123456 is deleted");
     given()
       .when().get("/freelancers/123456")
       .then()
-      .statusCode(404);
+      .statusCode(Status.NOT_FOUND.getStatusCode());
 
   }
 
@@ -70,11 +73,11 @@ public class FreelancerResourceTest {
       .body(freelancerAsString)
       .post("/freelancers")
       .then()
-      .statusCode(201);
+      .statusCode(Status.CREATED.getStatusCode());
     given()
       .get("/freelancers/999999")
       .then()
-      .statusCode(200);
+      .statusCode(Status.OK.getStatusCode());
   }
   @Test
   public void updateFreelancer() throws JsonProcessingException {
@@ -91,13 +94,13 @@ public class FreelancerResourceTest {
       .body(freelancerAsString)
       .post("/freelancers")
       .then()
-      .statusCode(201);
+      .statusCode(Status.CREATED.getStatusCode());
 
     given()
       .get("/freelancers/888888")
       .then()
       .assertThat()
-      .statusCode(200)
+      .statusCode(Status.OK.getStatusCode())
       .body("email", equalTo(freelancer.getEmail()))
       .body("lastName", equalTo(freelancer.getLastName()))
       .body("firstName",equalTo(freelancer.getFirstName()));
@@ -117,13 +120,13 @@ public class FreelancerResourceTest {
       .body(freelancerAsString)
       .put("/freelancers/123456")
       .then()
-      .statusCode(204);
+      .statusCode(Status.NO_CONTENT.getStatusCode());
 
      given()
       .get("/freelancers/123456")
       .then()
       .assertThat()
-      .statusCode(200)
+      .statusCode(Status.OK.getStatusCode())
       .body("email", equalTo("jteller@rider.com")); 
      
     
@@ -133,7 +136,7 @@ void shouldPingLiveness() {
     given()
         .when().get("/health/live")
         .then()
-        .statusCode(200);
+        .statusCode(Status.OK.getStatusCode());
 }
 
 @Test
@@ -141,14 +144,22 @@ void shouldPingReadiness() {
     given()
         .when().get("/health/ready")
         .then()
-        .statusCode(200);
+        .statusCode(Status.OK.getStatusCode());
 }
 @Test
 void shouldPingHealth() {
   given()
       .when().get("/health")
       .then()
-      .statusCode(200);
+      .statusCode(Status.OK.getStatusCode());
+}
+@Test
+void shouldPingMetrics() {
+    given()
+        .header(ACCEPT, APPLICATION_JSON)
+        .when().get("/metrics/application")
+        .then()
+        .statusCode(Status.OK.getStatusCode());
 }
 
 }

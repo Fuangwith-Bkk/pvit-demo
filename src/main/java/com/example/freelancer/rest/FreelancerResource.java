@@ -12,19 +12,19 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
-
-
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+
 
 import com.example.freelancer.jpa.FreelancerRepository;
 import com.example.freelancer.model.Freelancer;
 
 import org.jboss.logging.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 // import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -32,11 +32,15 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 // import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 // import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-//import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import  static javax.ws.rs.core.Response.Status.OK;
+import  static javax.ws.rs.core.Response.Status.NO_CONTENT;
+import  static javax.ws.rs.core.Response.Status.CREATED;
+import  static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Path("/freelancers")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@Produces(APPLICATION_JSON)
+@Consumes(APPLICATION_JSON)
 @ApplicationScoped
 public class FreelancerResource {
 
@@ -54,20 +58,24 @@ public class FreelancerResource {
 
     @GET
     @Operation(summary = "Returns all freelancers")
-    @APIResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Freelancer.class, required = true)))
+    @APIResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = Freelancer.class, required = true)))
+    @Counted(name = "countFindAll", description = "Counts how many times the findAll method has been invoked")
+    @Timed(name = "timeFindAll", description = "Times how long it takes to invoke the findAll method", unit = MetricUnits.MILLISECONDS)
     //Iterable<Freelancer> 
     public Response findAll() {
         logger.info("finaAll");
         return Response
-            .status(Status.OK)
-            .encoding(MediaType.APPLICATION_JSON)
+            .status(OK)
+            .encoding(APPLICATION_JSON)
             .entity(freelancerRepository.findAll())
             .build();
     }
+
     @GET
     @Path("/{freelancerId}")
     @Operation(summary = "Get freelaner by Id")
     @APIResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Freelancer.class, required = true)))
+    @APIResponse(responseCode = "404", content = @Content(mediaType = MediaType.APPLICATION_JSON))
     public Response findById(
         @PathParam("freelancerId") long freelancerId
     ) {
@@ -76,15 +84,15 @@ public class FreelancerResource {
         if (freelancers.isPresent()) {
             logger.info(freelancers.get().getId() + " is found");
             return Response
-                .status(Status.OK)
-                .encoding(MediaType.APPLICATION_JSON)
+                .status(OK)
+                .encoding(APPLICATION_JSON)
                 .entity(freelancers.get())
                 .build();
         } else {
             logger.info(freelancerId + " is not found");
             return Response
-                .status(Status.NOT_FOUND)
-                .encoding(MediaType.APPLICATION_JSON)
+                .status(NOT_FOUND)
+                .encoding(APPLICATION_JSON)
                 .build();
         }
     }
@@ -99,8 +107,8 @@ public class FreelancerResource {
         logger.info("deleteById: " + freelancerId);
         freelancerRepository.deleteById(freelancerId);
         return Response
-            .status(Status.NO_CONTENT)
-            .encoding(MediaType.APPLICATION_JSON)
+            .status(NO_CONTENT)
+            .encoding(APPLICATION_JSON)
             .build();
     }
 
@@ -108,6 +116,7 @@ public class FreelancerResource {
     @Path("/{freelancerId}")
     @Operation(summary = "Update freelancer")
     @APIResponse(responseCode = "204", content = @Content(mediaType = MediaType.APPLICATION_JSON))
+    @APIResponse(responseCode = "201", content = @Content(mediaType = MediaType.APPLICATION_JSON))
     public Response updateById(
         @PathParam("freelancerId") long freelancerId,
         Freelancer freelancer
@@ -121,15 +130,15 @@ public class FreelancerResource {
             freelancerRepository.save(freelancer);
             logger.info(freelancer.getId() + " is updated");
             return Response
-                .status(Status.NO_CONTENT)
-                .encoding(MediaType.APPLICATION_JSON)
+                .status(NO_CONTENT)
+                .encoding(APPLICATION_JSON)
                 .build();
          }else{
             Freelancer responseFreelancer = freelancerRepository.save(freelancer);
             logger.info(responseFreelancer.getId() + " is created");
             return Response
-                .status(Status.CREATED)
-                .encoding(MediaType.APPLICATION_JSON)
+                .status(CREATED)
+                .encoding(APPLICATION_JSON)
                 .entity(responseFreelancer)
                 .header("Location", "/freelancers/" + responseFreelancer.getId())
                 .build();
@@ -144,8 +153,8 @@ public class FreelancerResource {
         Freelancer freelancer
     ) {
         logger.info("createFreelancer: " + freelancer.getId());
-        return Response.status(Status.CREATED)
-            .encoding(MediaType.APPLICATION_JSON)
+        return Response.status(CREATED)
+            .encoding(APPLICATION_JSON)
             .entity(freelancerRepository.save(freelancer))
             .header("Location", "/freelancers/" + freelancer.getId())
             .build();
