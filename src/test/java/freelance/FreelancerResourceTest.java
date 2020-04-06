@@ -128,6 +128,27 @@ public class FreelancerResourceTest {
      
     
   }
+  @Test
+void shouldPingLiveness() {
+    given()
+        .when().get("/health/live")
+        .then()
+        .statusCode(200);
+}
 
+@Test
+void shouldPingReadiness() {
+    given()
+        .when().get("/health/ready")
+        .then()
+        .statusCode(200);
+}
+@Test
+void shouldPingHealth() {
+  given()
+      .when().get("/health")
+      .then()
+      .statusCode(200);
+}
 
 }
