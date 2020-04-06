@@ -25,6 +25,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
+import org.eclipse.microprofile.metrics.annotation.ConcurrentGauge;
+
 import org.eclipse.microprofile.openapi.annotations.Operation;
 // import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -57,10 +59,23 @@ public class FreelancerResource {
     }
 
     @GET
-    @Operation(summary = "Returns all freelancers")
-    @APIResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = Freelancer.class, required = true)))
-    @Counted(name = "countFindAll", description = "Counts how many times the findAll method has been invoked")
-    @Timed(name = "timeFindAll", description = "Times how long it takes to invoke the findAll method", unit = MetricUnits.MILLISECONDS)
+    @Operation(
+        summary = "Returns all freelancers"
+        )
+    @APIResponse(
+        responseCode = "200", 
+        content = @Content(mediaType = APPLICATION_JSON, 
+        schema = @Schema(implementation = Freelancer.class, required = true))
+        )
+    @Counted(
+        name = "countFindAll", 
+        description = "Counts how many times the findAll method has been invoked"
+        )
+    @Timed(
+        name = "timeFindAll", 
+        description = "Times how long it takes to invoke the findAll method", 
+        unit = MetricUnits.MILLISECONDS
+        )
     //Iterable<Freelancer> 
     public Response findAll() {
         logger.info("finaAll");
@@ -76,6 +91,15 @@ public class FreelancerResource {
     @Operation(summary = "Get freelaner by Id")
     @APIResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Freelancer.class, required = true)))
     @APIResponse(responseCode = "404", content = @Content(mediaType = MediaType.APPLICATION_JSON))
+    @Counted(
+        name = "countFindById", 
+        description = "Counts how many times the findById method has been invoked"
+        )
+    @Timed(
+        name = "timeFindById", 
+        description = "Times how long it takes to invoke the findById method", 
+        unit = MetricUnits.MILLISECONDS
+        )
     public Response findById(
         @PathParam("freelancerId") long freelancerId
     ) {
@@ -101,6 +125,15 @@ public class FreelancerResource {
     @Path("/{freelancerId}")
     @Operation(summary = "Returns all freelancers")
     @APIResponse(responseCode = "204", content = @Content(mediaType = MediaType.APPLICATION_JSON))
+    @Counted(
+        name = "countDeleteById", 
+        description = "Counts how many times the deleteById method has been invoked"
+        )
+    @Timed(
+        name = "timeDeleteById", 
+        description = "Times how long it takes to invoke the deleteById method", 
+        unit = MetricUnits.MILLISECONDS
+        )
     public Response deleteById(
         @PathParam("freelancerId") long freelancerId
     ) {
@@ -117,6 +150,15 @@ public class FreelancerResource {
     @Operation(summary = "Update freelancer")
     @APIResponse(responseCode = "204", content = @Content(mediaType = MediaType.APPLICATION_JSON))
     @APIResponse(responseCode = "201", content = @Content(mediaType = MediaType.APPLICATION_JSON))
+    @Counted(
+        name = "countUpdateById", 
+        description = "Counts how many times the updateById method has been invoked"
+        )
+    @Timed(
+        name = "timeUpdateById", 
+        description = "Times how long it takes to invoke the updateById method", 
+        unit = MetricUnits.MILLISECONDS
+        )
     public Response updateById(
         @PathParam("freelancerId") long freelancerId,
         Freelancer freelancer
@@ -149,6 +191,15 @@ public class FreelancerResource {
     @Path("/")
     @Operation(summary = "Create freelancer")
     @APIResponse(responseCode = "201", content = @Content(mediaType = MediaType.APPLICATION_JSON))
+    @Counted(
+        name = "countCreateFreelancer", 
+        description = "Counts how many times the createFreelancer method has been invoked"
+        )
+    @Timed(
+        name = "timeCreateFreelancer", 
+        description = "Times how long it takes to invoke the createFreelancer method", 
+        unit = MetricUnits.MILLISECONDS
+        )
     public Response createFreelancer(
         Freelancer freelancer
     ) {
