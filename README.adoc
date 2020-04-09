@@ -1,0 +1,130 @@
+= Freelancer Application
+
+[source,bash]
+
+----
+ ██████╗ ██╗   ██╗ █████╗ ██████╗ ██╗  ██╗██╗   ██╗███████╗                       
+██╔═══██╗██║   ██║██╔══██╗██╔══██╗██║ ██╔╝██║   ██║██╔════╝                       
+██║   ██║██║   ██║███████║██████╔╝█████╔╝ ██║   ██║███████╗                       
+██║▄▄ ██║██║   ██║██╔══██║██╔══██╗██╔═██╗ ██║   ██║╚════██║                       
+╚██████╔╝╚██████╔╝██║  ██║██║  ██║██║  ██╗╚██████╔╝███████║                       
+ ╚══▀▀═╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝                       
+███████╗██████╗ ███████╗███████╗██╗      █████╗ ███╗   ██╗ ██████╗███████╗██████╗ 
+██╔════╝██╔══██╗██╔════╝██╔════╝██║     ██╔══██╗████╗  ██║██╔════╝██╔════╝██╔══██╗
+█████╗  ██████╔╝█████╗  █████╗  ██║     ███████║██╔██╗ ██║██║     █████╗  ██████╔╝
+██╔══╝  ██╔══██╗██╔══╝  ██╔══╝  ██║     ██╔══██║██║╚██╗██║██║     ██╔══╝  ██╔══██╗
+██║     ██║  ██║███████╗███████╗███████╗██║  ██║██║ ╚████║╚██████╗███████╗██║  ██║
+╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚══════╝╚═╝  ╚═╝
+                                                                                  
+----
+
+Sample application developed with Quarkus with following functions:
+
+* RESTful API
+* JPA (for access database i.e. PostgreSQ and H2)
+* Health Check (Liveness and Readiness)
+* OpenAPI (with Swagger UI)
+* Microprofile Metrics
+* Unit Test with REST Assured
+
+
+URI supported by application
+
+[options=header]
+|===
+|URI|Method|Description
+|/freelancers|GET|get all freelancers
+|/freelancers/{freelancerId}|GET|get freelancer by Id
+|/freelancers|POST|add new freelancer
+|/freelancers/{freelancer}|PUT|update freelancer by Id
+|/freelancers/{freelancer}|DELETE|delete freelancer by Id
+|/metrics/application|GET|Get metrics data (with header Accept: application/json for JSON)
+|/health|GET|Health check for liveness and readiness
+|/health/live|GET|Livenness probe
+|/health/ready|GET|Readiness probe
+|/openapi|GET|Return OpenAPI document in yaml 
+|/openapi?format=json|GET|Return OpenAPI document in JSON 
+|/swagger-ui|GET|Swagger UI (only in Dev profile) 
+|===
+
+== Build JAR
+Quarkus 1.3.1 needs maven 3.6.3+
+
+[source,bash]
+----
+# Compile
+mvn clean compile
+
+# Build With Dev Profile
+# Dev profile is configured with H2 database
+mvn package -Dquarkus.profile=dev
+# Test run app locally
+java -jar target/freelancer-1.0.0-runner.jar
+
+# Build with Default Profile
+# This will use default profile
+# Check application.properties for RDMBS configuration
+# You can also have you own in ./config/application.proprites 
+# relative path to where your jar is reside.
+mvn package -DskipTests=true
+
+# Build Uber JAR. if you want just on jar file
+# By default, Quarkus will separate lib in directory lib/
+mvn package -Dquarkus.package.uber-jar=true
+
+# Build Native Binary with Dev Profile
+# (Add dev profile if you want)
+mvn package -Pnative
+
+# Build Native Binary for Container
+# (Add dev profile if you want)
+mvn cpackage -Dquarkus.native.container-build=true -Pnative
+----
+
+== Build Container
+
+There are 2 Dockerfile provided:
+
+Remark: Check that link:.dockerignore[.dockerignore] is included runner,jar and lib in folder target
+
+* Build container with JAR by Dockerfile ( link:src/main/docker/Dockerfile.jvm[Dockerfile.jvm] )
+    
+[source,bash]
+----
+mvn package -DskipTests=true
+docker build -f src/main/docker/Dockerfile.jvm \
+-t ${CONTAINER_NAME}:${TAG} .
+----
+
+* Build container with Native Binary by Dockerfile ( link:src/main/docker/Dockerfile.native[Dockerfile.native] )
+
+[source,bash]
+----
+mvn package -DskipTests=true -Dquarkus.native.container-build=true -Pnative
+docker build -f src/main/docker/Dockerfile.native \
+-t ${CONTAINER_NAME}:${TAG} .
+----
+
+== Deploy on OpenShfit with Source-to-Image (S2I)
+
+* Quarkus support S2I that you can build with "oc new-app". You also need S2I configuration file at link:.s2i/environment[.s2i/environment]
+
+[source,bash]
+----
+ARTIFACT_COPY_ARGS=-p -r lib/ *-runner.jar
+JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.
+----
+
+* Start build and deploy to OpenShift with "oc new-app"
+
+[source,bash]
+----
+# Git URL
+APP_GIT_REPOSITORY=https://gitlab.com/ocp-demo/freelancer-quarkus.git
+# Build & Deploy
+oc new-app \
+${APP_GIT_REPOSITORY} \
+--name=freelancer
+# Check for result
+----
+
