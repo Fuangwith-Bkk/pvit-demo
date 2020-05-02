@@ -41,22 +41,47 @@
                 <code>/freelancers/{id}</code>List by Id<br>
             </div>
             <div class="sect2">
-                <h3 id="_using_the_freelancer_service">Search freelancers</h3>
+                <p>&nbsp;</p><h3 id="_using_the_freelancer_service">Search freelancers</h3>
+                <form class="form-inline">
+                    <div class="form-group">
+                      <label for="search">Id:</label>
+                      <input type="text" class="form-control" id="Id" placeholder="123456">
+                    </div>
+                    <button id="invoke" type="submit" class="btn btn-success">Query</button>
+                  </form>
+            </div>
+            <div class="sect2">
+                <p>&nbsp;</p><h3 id="_using_the_freelancer_service">Healthcheck Service</h3>
+                <form class="form-inline">
+                    <div class="form-group">
+                      <label for="search">&nbsp;</label>
+                      <!-- <input type="text" class="form-control" id="Id"> -->
+                    </div>
+                    <button id="health" type="submit" class="btn btn-success">Health</button>
+                    <button id="readiness" type="submit" class="btn btn-success">Readiness</button>
+                    <button id="liveness" type="submit" class="btn btn-success">Liveness</button>
+                  </form>
             </div>
         </div>
     </div>
 
-    <form class="form-inline">
+    <!-- <form class="form-inline">
       <div class="form-group">
-        <label for="name">Name</label>
+        <label for="search">Id:</label>
         <input type="text" class="form-control" id="Id" placeholder="123456">
       </div>
       <button id="invoke" type="submit" class="btn btn-success">Query</button>
-      <button id="health" type="submit" class="btn btn-success">Health</button>
-      <button id="stop" type="submit" class="btn btn-danger">Stop Service</button>
-    </form>
+    </form> -->
 
-    <h3>Result:</h3>
+    <!-- <form class="form-inline">
+        <div class="form-group">
+          <label for="Health check"></label>
+         
+        </div>
+        <button id="health" type="submit" class="btn btn-success">Health</button>
+      </form> -->
+
+      <p>&nbsp;</p><h3>Result:</h3>
     <pre><code id="freelancers-result">Invoke the service to see the result.</code></pre>
   </div>
 </div>
@@ -73,7 +98,7 @@
     function invokeService() {
         var n = $("#Id").val();
         $.getJSON("/freelancers/" + n, function (res) {
-            $("#freelancers-result").html(JSON.stringify(res).fontcolor('blue'));
+            $("#freelancers-result").html(JSON.stringify(res,null, 4).fontcolor('blue'));
         }).fail(function(err) {
             $("#freelancers-result").html(JSON.stringify(err));
         });
@@ -81,7 +106,21 @@
 
     function invokeHealth() {
         $.getJSON("/health", function (res) {
-            $("#freelancers-result").html(JSON.stringify(res));
+            $("#freelancers-result").html(JSON.stringify(res,null, 4).fontcolor('green'));
+        }).fail(function(err) {
+            $("#freelancers-result").html(JSON.stringify(err));
+        });
+    }
+    function invokeReadiness() {
+        $.getJSON("/health/ready", function (res) {
+            $("#freelancers-result").html(JSON.stringify(res,null, 4).fontcolor('green'));
+        }).fail(function(err) {
+            $("#freelancers-result").html(JSON.stringify(err));
+        });
+    }
+    function invokeLiveness() {
+        $.getJSON("/health/live", function (res) {
+            $("#freelancers-result").html(JSON.stringify(res,null, 4).fontcolor('green'));
         }).fail(function(err) {
             $("#freelancers-result").html(JSON.stringify(err));
         });
@@ -110,6 +149,14 @@
 
         $("#health").click(function (e){
             invokeHealth();
+            e.preventDefault();
+        });
+        $("#readiness").click(function (e){
+            invokeReadiness();
+            e.preventDefault();
+        });
+        $("#liveness").click(function (e){
+            invokeLiveness();
             e.preventDefault();
         });
 
