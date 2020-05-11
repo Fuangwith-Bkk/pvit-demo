@@ -2,14 +2,17 @@ package com.example.freelancer.model;
 
 import java.io.Serializable;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -17,12 +20,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Table(name = "freelancer_skills")
 @JsonPropertyOrder({ "skill", "detail" })
 public class Skills implements Serializable{
+	private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = -182421598881384687L;
-
-    @Id
+	@Id
     @Column(name="id")
-    @JsonIgnore
+    @GeneratedValue
+    @JsonbTransient
     private Long id;
 
     @Column(name="skill")
@@ -30,11 +33,12 @@ public class Skills implements Serializable{
 
     @Column(name="detail")
     private String detail;
+    
 
-    // @JsonBackReference
-    @ManyToOne(fetch=FetchType.LAZY, optional = false)
-    @JoinColumn(name = "freelancer_id",insertable=false, updatable=false)
-    @JsonIgnore
+    @ManyToOne(fetch=FetchType.LAZY, optional = true)
+    //@JoinColumn(name = "freelancer_id",insertable=false, updatable=false)
+    @JoinColumn(name = "freelancer_id",nullable = false)
+    @JsonbTransient
     private Freelancer freelancer;
 
     public String getDetail(){
@@ -50,14 +54,15 @@ public class Skills implements Serializable{
         this.freelancer = freelancer;
     }
 
-    public Long getId() {
-        return id;
-    }
+  
     public String getSkill() {
         return skill;
     }
     public void setSkill(String skill) {
         this.skill = skill;
+    }
+      public Long getId() {
+        return id;
     }
     public void setId(Long id) {
         this.id = id;
