@@ -7,7 +7,7 @@ CREATE TABLE FREELANCER (
   email varchar(50)
 );
 CREATE TABLE FREELANCER_SKILLS (
-  id integer PRIMARY KEY,
+  id integer not null,
   skill varchar(50),
   detail varchar(100),
   freelancer_id integer not null,

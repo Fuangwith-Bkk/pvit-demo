@@ -1,6 +1,12 @@
 {
     "id": 567890,
-    "email": "jjordison@slipknot.com",
-    "firstName": "Joey",
-    "lastName": "Jordison"
+    "email": "jordy@slipknot.com",
+    "firstName": "Jordy",
+    "lastName": "Jordison",
+    "skills": [
+        {
+            "detail": "Drum",
+            "skill": "Heavy Metal double bass drum"
+        }
+    ]
 }
