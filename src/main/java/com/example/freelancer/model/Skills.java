@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,8 +25,8 @@ public class Skills implements Serializable{
 
 	@Id
     @Column(name="id")
-    @GeneratedValue
-    @JsonbTransient
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    // @JsonbTransient
     private Long id;
 
     @Column(name="skill")
@@ -36,9 +37,8 @@ public class Skills implements Serializable{
     
 
     @ManyToOne(fetch=FetchType.LAZY, optional = true)
-    //@JoinColumn(name = "freelancer_id",insertable=false, updatable=false)
-    @JoinColumn(name = "freelancer_id",nullable = false)
-    @JsonbTransient
+    @JoinColumn(name = "freelancer_id",insertable=true, updatable=true)
+    //@JoinColumn(name = "freelancer_id",nullable = false)
     private Freelancer freelancer;
 
     public String getDetail(){
