@@ -48,6 +48,7 @@ public class Freelancer implements Serializable {
     @OneToMany(
         fetch = FetchType.EAGER,
         mappedBy = "freelancer",
+        orphanRemoval = true,
         cascade = CascadeType.ALL
     )
     private Set<Skills> skills; 

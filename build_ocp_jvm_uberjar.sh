@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "Build Freelancer App"
-APP_NAME=freelancer
+APP_NAME=freelancer-quarkus
 mvn clean package -DskipTests=true -Dquarkus.package.uber-jar=true
 oc new-build --binary --name=${APP_NAME} -l app=${APP_NAME}
 oc patch bc/${APP_NAME} -p "{\"spec\":{\"strategy\":{\"dockerStrategy\":{\"dockerfilePath\":\"src/main/docker/Dockerfile.jvm_uberjar\"}}}}"

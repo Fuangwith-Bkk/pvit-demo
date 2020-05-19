@@ -7,10 +7,10 @@ CREATE TABLE FREELANCER (
   email varchar(50)
 );
 CREATE TABLE FREELANCER_SKILLS (
-  id integer,
+  id integer primary key,
   skill varchar(50),
   detail varchar(100),
-  freelancer_id integer not null,
+  freelancer_id integer,
   FOREIGN KEY (freelancer_id) REFERENCES freelancer(id)
 );
 

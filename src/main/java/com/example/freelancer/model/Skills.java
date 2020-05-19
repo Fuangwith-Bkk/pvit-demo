@@ -3,6 +3,7 @@ package com.example.freelancer.model;
 import java.io.Serializable;
 
 import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,8 +26,8 @@ public class Skills implements Serializable{
 
 	@Id
     @Column(name="id")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    // @JsonbTransient
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @JsonbTransient
     private Long id;
 
     @Column(name="skill")
@@ -34,11 +35,15 @@ public class Skills implements Serializable{
 
     @Column(name="detail")
     private String detail;
-    
 
-    @ManyToOne(fetch=FetchType.LAZY, optional = true)
-    @JoinColumn(name = "freelancer_id",insertable=true, updatable=true)
+    @Column(name="freelancer_id")
+    @JsonbTransient
+    private Long freelancerId;    
+
+    @ManyToOne(fetch=FetchType.LAZY, optional = true,cascade = CascadeType.ALL)
+    @JoinColumn(name = "freelancer_id",insertable=false, updatable=false,nullable=true)
     //@JoinColumn(name = "freelancer_id",nullable = false)
+    @JsonbTransient
     private Freelancer freelancer;
 
     public String getDetail(){
@@ -67,6 +72,11 @@ public class Skills implements Serializable{
     public void setId(Long id) {
         this.id = id;
     }
-    
+    public Long getFreelancerId() {
+        return freelancerId;
+    }
+    public void setFreelancerId(Long freelancerId) {
+        this.freelancerId = freelancerId;
+    }
     
 }
