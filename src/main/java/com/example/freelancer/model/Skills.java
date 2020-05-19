@@ -25,8 +25,9 @@ public class Skills implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @Column(name="id")
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    //@GeneratedValue
+    @Column(name = "id")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @JsonbTransient
     private Long id;
 
@@ -42,7 +43,7 @@ public class Skills implements Serializable{
 
     @ManyToOne(fetch=FetchType.LAZY, optional = true,cascade = CascadeType.ALL)
     @JoinColumn(name = "freelancer_id",insertable=false, updatable=false,nullable=true)
-    //@JoinColumn(name = "freelancer_id",nullable = false)
+    //@JoinColumn(name = "freelancer_id")
     @JsonbTransient
     private Freelancer freelancer;
 

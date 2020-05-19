@@ -20,6 +20,11 @@ import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.Response.Status;
 
+// import io.quarkus.test.common.QuarkusTestResource;
+// import io.quarkus.test.h2.H2DatabaseTestResource;
+
+
+
 @QuarkusTest
 public class FreelancerResourceTest {
   private static final Logger logger = Logger.getLogger(FreelancerResourceTest.class);

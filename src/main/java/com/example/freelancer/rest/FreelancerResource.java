@@ -1,6 +1,11 @@
 package com.example.freelancer.rest;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -19,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import com.example.freelancer.jpa.FreelancerRepository;
 import com.example.freelancer.model.Freelancer;
+import com.example.freelancer.model.Skills;
 
 import org.jboss.logging.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -138,11 +144,18 @@ public class FreelancerResource {
         @PathParam("freelancerId") long freelancerId
     ) {
         logger.info("deleteById: " + freelancerId);
-        freelancerRepository.deleteById(freelancerId);
-        return Response
+        if(freelancerRepository.existsById(freelancerId)){
+            freelancerRepository.deleteById(freelancerId);
+            return Response
             .status(NO_CONTENT)
             .encoding(APPLICATION_JSON)
             .build();
+        }else{
+            logger.info("Id:"+freelancerId+" is already exists");
+            return Response
+            .status(NOT_FOUND)
+            .build();
+        }       
     }
 
     @PUT
@@ -164,11 +177,10 @@ public class FreelancerResource {
         Freelancer freelancer
     ) {
         logger.info("updateById: " + freelancerId);
-        boolean isPresent = freelancerRepository.findById(freelancerId).isPresent();
-        
-        logger.info("isPresent: " + isPresent);
        
-        if (isPresent){
+       
+        if (freelancerRepository.existsById(freelancerId)){
+            freelancer.setSkills(updateSkills(freelancer.getId(),freelancer.getSkills()));
             freelancerRepository.save(freelancer);
             logger.info(freelancer.getId() + " is updated");
             return Response
@@ -176,6 +188,7 @@ public class FreelancerResource {
                 .encoding(APPLICATION_JSON)
                 .build();
          }else{
+            freelancer.setSkills(updateSkills(freelancer.getId(),freelancer.getSkills()));
             Freelancer responseFreelancer = freelancerRepository.save(freelancer);
             logger.info(responseFreelancer.getId() + " is created");
             return Response
@@ -204,11 +217,28 @@ public class FreelancerResource {
         Freelancer freelancer
     ) {
         logger.info("createFreelancer: " + freelancer.getId());
-        return Response.status(CREATED)
+         
+           
+            freelancer.setSkills(updateSkills(freelancer.getId(),freelancer.getSkills()));
+            return Response.status(CREATED)
             .encoding(APPLICATION_JSON)
             .entity(freelancerRepository.save(freelancer))
             .header("Location", "/freelancers/" + freelancer.getId())
             .build();
+  
+        
+    }
+
+    private Set<Skills> updateSkills(Long id,Set<Skills> skills ){
+        // Set<Skills> skills = freelancer.getSkills();
+        Set<Skills> update_skills = new HashSet<Skills>(); 
+        Iterator iterator = skills.iterator(); 
+        while(iterator.hasNext()){
+            Skills skill = (Skills)iterator.next();
+            skill.setFreelancerId(id);
+            update_skills.add(skill);
+        }
+        return update_skills;
     }
 
 
