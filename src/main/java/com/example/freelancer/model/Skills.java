@@ -43,7 +43,6 @@ public class Skills implements Serializable{
 
     @ManyToOne(fetch=FetchType.LAZY, optional = true,cascade = CascadeType.ALL)
     @JoinColumn(name = "freelancer_id",insertable=false, updatable=false,nullable=true)
-    //@JoinColumn(name = "freelancer_id")
     @JsonbTransient
     private Freelancer freelancer;
 

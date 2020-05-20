@@ -10,4 +10,5 @@ public interface FreelancerRepository extends CrudRepository<Freelancer,Long>{
 
     Optional<Freelancer> findById(Long freelancerId);
     boolean existsById(Long freelancerId);
+
 }

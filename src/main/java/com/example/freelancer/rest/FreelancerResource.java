@@ -1,38 +1,35 @@
 package com.example.freelancer.rest;
 
-import java.util.ArrayList;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import  static javax.ws.rs.core.Response.Status.CREATED;
+import  static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import  static javax.ws.rs.core.Response.Status.NO_CONTENT;
+import  static javax.ws.rs.core.Response.Status.OK;
+
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
-
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 
 import com.example.freelancer.jpa.FreelancerRepository;
 import com.example.freelancer.model.Freelancer;
 import com.example.freelancer.model.Skills;
 
-import org.jboss.logging.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
-import org.eclipse.microprofile.metrics.annotation.ConcurrentGauge;
-
 import org.eclipse.microprofile.openapi.annotations.Operation;
 // import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -40,11 +37,8 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 // import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 // import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import  static javax.ws.rs.core.Response.Status.OK;
-import  static javax.ws.rs.core.Response.Status.NO_CONTENT;
-import  static javax.ws.rs.core.Response.Status.CREATED;
-import  static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import org.jboss.logging.Logger;
+import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 @Path("/freelancers")
 @Produces(APPLICATION_JSON)
@@ -56,8 +50,8 @@ public class FreelancerResource {
 
     private static final Logger logger = Logger.getLogger(FreelancerResource.class);
 
-    @ConfigProperty(name = "app.version", defaultValue = "1.0.0")
-    String version;
+    // @ConfigProperty(name = "app.version", defaultValue = "1.0.0")
+    // String version;
 
 
     public FreelancerResource(FreelancerRepository freelancerRepository) {
@@ -81,8 +75,7 @@ public class FreelancerResource {
         name = "timeFindAll", 
         description = "Times how long it takes to invoke the findAll method", 
         unit = MetricUnits.MILLISECONDS
-        )
-    //Iterable<Freelancer> 
+        ) 
     public Response findAll() {
         logger.info("finaAll");
         return Response
@@ -177,28 +170,29 @@ public class FreelancerResource {
         Freelancer freelancer
     ) {
         logger.info("updateById: " + freelancerId);
-       
+      
        
         if (freelancerRepository.existsById(freelancerId)){
             freelancer.setSkills(updateSkills(freelancer.getId(),freelancer.getSkills()));
             freelancerRepository.save(freelancer);
-            logger.info(freelancer.getId() + " is updated");
+            logger.info(freelancer.getId() + " is exists");
+            freelancerRepository.save(freelancer);
             return Response
                 .status(NO_CONTENT)
                 .encoding(APPLICATION_JSON)
                 .build();
          }else{
             freelancer.setSkills(updateSkills(freelancer.getId(),freelancer.getSkills()));
-            Freelancer responseFreelancer = freelancerRepository.save(freelancer);
-            logger.info(responseFreelancer.getId() + " is created");
+            freelancerRepository.save(freelancer);
+            logger.info(freelancer.getId() + " is created");
             return Response
                 .status(CREATED)
                 .encoding(APPLICATION_JSON)
-                .entity(responseFreelancer)
-                .header("Location", "/freelancers/" + responseFreelancer.getId())
+                .entity(freelancer)
+                .header("Location", "/freelancers/" + freelancer.getId())
                 .build();
         }
-            }
+    }
 
     @POST
     @Path("/")
@@ -217,20 +211,25 @@ public class FreelancerResource {
         Freelancer freelancer
     ) {
         logger.info("createFreelancer: " + freelancer.getId());
-         
-           
-            freelancer.setSkills(updateSkills(freelancer.getId(),freelancer.getSkills()));
+        freelancer.setSkills(updateSkills(freelancer.getId(),freelancer.getSkills()));
+        if(!freelancerRepository.existsById(freelancer.getId())){
             return Response.status(CREATED)
             .encoding(APPLICATION_JSON)
             .entity(freelancerRepository.save(freelancer))
             .header("Location", "/freelancers/" + freelancer.getId())
             .build();
-  
-        
+        }else{
+            logger.info(freelancer.getId()+ " is already exists");
+            freelancerRepository.deleteById(freelancer.getId());
+            return Response.status(OK)
+            .encoding(APPLICATION_JSON)
+            .entity(freelancerRepository.save(freelancer))
+            .header("Location", "/freelancers/" + freelancer.getId())
+            .build();
+        }     
     }
 
     private Set<Skills> updateSkills(Long id,Set<Skills> skills ){
-        // Set<Skills> skills = freelancer.getSkills();
         Set<Skills> update_skills = new HashSet<Skills>(); 
         Iterator iterator = skills.iterator(); 
         while(iterator.hasNext()){
@@ -240,6 +239,7 @@ public class FreelancerResource {
         }
         return update_skills;
     }
+
 
 
 }

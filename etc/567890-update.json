@@ -5,8 +5,8 @@
     "lastName": "Jordison",
     "skills": [
         {
-            "detail": "Drum",
-            "skill": "Heavy Metal double bass drum"
+            "detail": "Junior React Developer",
+            "skill": "react-js"
         }
     ]
 }
