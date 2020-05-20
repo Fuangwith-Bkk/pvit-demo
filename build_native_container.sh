@@ -1,6 +1,7 @@
 #!/bin/sh
 # -Dnative-image.xmx=5g for increase mvn memory.
 # You also need to configure maximum of Docker to 8 GB if you use Docker
+# Docker => Preference => Resources => Advanced
 CONTAINER_NAME=freelancer-native
 TAG=v1
 START_BUILD_APP=$(date +%s)
