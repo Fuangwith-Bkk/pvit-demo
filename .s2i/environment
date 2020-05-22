@@ -1,3 +1,4 @@
 ARTIFACT_COPY_ARGS=-p -r lib/ *-runner.jar
 JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0
+MAVEN_MIRROR_URL=http://nexus.demo-nexus.svc.cluster.local:8081/repository/maven-all-public/
 
